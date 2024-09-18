@@ -27,8 +27,6 @@ async def start(update: Update, context: CallbackContext):
     # Enregistrer l'utilisateur dans la base de données
     conn = get_db_connection()
     c = conn.cursor()
-    
-    # Créer la table si elle n'existe pas déjà
     c.execute('''
         CREATE TABLE IF NOT EXISTS users (
             user_id BIGINT PRIMARY KEY,
@@ -36,27 +34,16 @@ async def start(update: Update, context: CallbackContext):
             first_name TEXT
         )
     ''')
-    
-    # Vérifier si l'utilisateur est déjà inscrit
-    c.execute('SELECT COUNT(*) FROM users')
-    total_users = c.fetchone()[0] + 1  # La position actuelle de l'utilisateur
-    
     c.execute('''
         INSERT INTO users (user_id, username, first_name)
         VALUES (%s, %s, %s)
         ON CONFLICT (user_id) DO NOTHING
     ''', (user_id, username, first_name))
-    
-    if c.rowcount == 0:
-        message = f"You are already registered. There are currently {total_users - 1} participants. Please be patient."
-    else:
-        message = f"Welcome to 𝐆𝐔𝐌𝐈 and the 𝐅𝐫𝐨𝐤𝐮𝐳𝐚, a legend in the making! You are the {total_users}th participant."
-    
     conn.commit()
     conn.close()
 
     logger.info("Received /start command from user_id: %s", user_id)
-    await update.message.reply_text(message)
+    await update.message.reply_text("test test test !")
     logger.info("Sent reply to user_id: %s", user_id)
 
 def main():
@@ -69,4 +56,4 @@ def main():
     logger.info("Bot stopped")
 
 if __name__ == "__main__":
-    main()
+    main() 
